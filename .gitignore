@@ -4,7 +4,7 @@ data/
 models/
 mlruns/
 mlartifacts/
-mlflow_env/
+data_pipeline/mlflow/mlfow_env
 env/
 .env
 *.log
