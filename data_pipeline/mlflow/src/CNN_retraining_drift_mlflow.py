@@ -23,6 +23,7 @@ import requests
 import tempfile
 import shutil
 import logging
+from pathlib import Path
 
 
 # Désactiver les GPU
@@ -31,7 +32,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # (Optionnel) Définir l'URI de tracking MLflow
 #mlflow.set_tracking_uri("http://127.0.0.1:8080")
 # Définir l'URI de tracking MLflow
-mlflow.set_tracking_uri("http://127.0.0.1:8080")  # URI du serveur MLflow
+mlflow.set_tracking_uri("http://localhost:8080")
+
 
 # Vérifier la connexion au serveur MLflow
 try:
@@ -195,50 +197,29 @@ logger = logging.getLogger(__name__)
 
 def log_artifacts_to_mlflow(local_artifacts):
     """
-    Copie les artéfacts locaux vers un répertoire temporaire et les enregistre dans MLflow
-    
-    Args:
-        local_artifacts (dict): Dictionnaire avec {nom_artifact: chemin_local}
+    Enregistre les artéfacts dans MLflow
     """
-    logger.info("Début du logging des artéfacts...")
-    logger.info(f"Artéfacts à logger: {local_artifacts}")
-    
-    # Créer un répertoire temporaire
-    with tempfile.TemporaryDirectory() as temp_dir:
-        logger.info(f"Répertoire temporaire créé: {temp_dir}")
-        
-        # Copier chaque artéfact dans le répertoire temporaire
-        for artifact_name, local_path in local_artifacts.items():
-            logger.info(f"Traitement de l'artéfact {artifact_name} depuis {local_path}")
-            
-            if not os.path.exists(local_path):
-                logger.error(f"Le chemin {local_path} n'existe pas!")
-                continue
-                
-            # Créer un sous-répertoire pour chaque type d'artéfact
-            artifact_temp_dir = os.path.join(temp_dir, artifact_name)
-            os.makedirs(artifact_temp_dir, exist_ok=True)
-            logger.info(f"Sous-répertoire créé: {artifact_temp_dir}")
-            
-            try:
-                # Copier le fichier ou le répertoire
-                if os.path.isdir(local_path):
-                    temp_path = os.path.join(artifact_temp_dir, os.path.basename(local_path))
-                    logger.info(f"Copie du répertoire {local_path} vers {temp_path}")
-                    shutil.copytree(local_path, temp_path)
-                else:
-                    temp_path = os.path.join(artifact_temp_dir, os.path.basename(local_path))
-                    logger.info(f"Copie du fichier {local_path} vers {temp_path}")
-                    shutil.copy2(local_path, temp_path)
-                
-                # Log dans MLflow
-                logger.info(f"Logging de {artifact_temp_dir} vers MLflow")
-                mlflow.log_artifacts(artifact_temp_dir, artifact_name)
-                logger.info(f"Artéfact {artifact_name} loggé avec succès")
-                
-            except Exception as e:
-                logger.error(f"Erreur lors du traitement de {artifact_name}: {str(e)}")
+    # Afficher l'URI des artifacts au début
+    artifact_uri = mlflow.get_artifact_uri()
+    logger.info(f"MLflow artifact URI de base: {artifact_uri}")
 
+    for artifact_name, local_path in local_artifacts.items():
+        if os.path.exists(local_path):
+            try:
+                # Obtenir l'URI spécifique pour cet artifact
+                specific_uri = mlflow.get_artifact_uri(artifact_name)
+                logger.info(f"URI pour {artifact_name}: {specific_uri}")
+                
+                if os.path.isdir(local_path):
+                    logger.info(f"Logging du répertoire {local_path} vers {specific_uri}")
+                    mlflow.log_artifacts(local_path, artifact_name)
+                else:
+                    logger.info(f"Logging du fichier {local_path} vers {specific_uri}")
+                    mlflow.log_artifact(local_path, artifact_name)
+                logger.info(f"Artéfact {artifact_name} loggé avec succès")
+            except Exception as e:
+                logger.error(f"Erreur lors du logging de {artifact_name}: {str(e)}")
+                logger.exception(e)
 #-------------------------------------------------------------------------------
 # Fonction pour récupérer le dernier dataset basé sur le timestamp
 #-------------------------------------------------------------------------------
@@ -302,8 +283,8 @@ val_dataset_tf = tf.data.Dataset.load(val_dataset_path).prefetch(tf.data.AUTOTUN
 reference_dataset_tf = tf.data.Dataset.load(reference_dataset_path).prefetch(tf.data.AUTOTUNE)
 
 # Configuration des chemins de sauvegarde
-timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-output_dir = os.path.join(base_path, f"../models/model_{timestamp}")
+timestamp_model = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+output_dir = os.path.join(base_path, f"../models/model_{timestamp_model}")
 os.makedirs(output_dir, exist_ok=True)
 
 saved_model_path = os.path.join(output_dir, "saved_modelcnn.keras")
@@ -482,11 +463,11 @@ with mlflow.start_run(run_name=run_name) as run:
 
     # Préparer le dictionnaire des artéfacts locaux
     local_artifacts = {
-        "drift_reports": report_path,
-        "model": saved_model_path,
-        "training_history": history_path,
-        "visualizations": figure_path
-    }
+    "drift_reports": report_path,
+    "model": saved_model_path,
+    "training_history": history_path,
+    "visualizations": figure_path
+}
     
     # Logger les artéfacts via la fonction utilitaire
     logger.info("Début du logging des artéfacts vers MLflow")

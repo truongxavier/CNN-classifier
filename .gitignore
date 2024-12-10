@@ -10,3 +10,4 @@ env/
 *.log
 *.db
 mlartifacts/
+monitoring/grafana/grafana.db
