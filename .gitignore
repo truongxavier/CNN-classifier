@@ -8,3 +8,4 @@ mlflow_env/
 env/
 .env
 *.log
+*.db
