@@ -1,0 +1,9 @@
+bentoml>=1.0,<2.0
+tensorflow>=2.10.0,<3.0
+python-jose>=3.3
+python-dotenv>=0.21
+Pillow>=9.0
+requests>=2.26.0
+numpy
+fastapi
+PyJWT>=2.0

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+data/
+models/
+mlruns/
+mlartifacts/
+mlflow_env/
+env/
+.env
+*.log

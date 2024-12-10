@@ -1,0 +1,20 @@
+groups:
+  - name: "drift_alerts"
+    rules:
+      - alert: HighTestLoss
+        expr: model_val_loss > 2.0  # Déclenche si la perte dépasse 2.0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High test loss detected"
+          description: "The test loss for the model is {{ $value }}. Please investigate."
+
+      - alert: LowTestAccuracy
+        expr: model_val_accuracy < 0.75  # Déclenche si la précision est inférieure à 75%
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low test accuracy detected"
+          description: "The test accuracy for the model is {{ $value }}. Please investigate."

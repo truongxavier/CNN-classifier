@@ -1,0 +1,62 @@
+version: "3.9"
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring_network
+
+  grafana:
+    image: grafana/grafana:latest
+    user: "472"
+    ports:
+      - "${GRAFANA_PORT:-3100}:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring_network
+
+  metrics_exporter:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MLFLOW_TRACKING_URI=http://host.docker.internal:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./prometheus_exporter.py:/app/prometheus_exporter.py
+    networks:
+      - monitoring_network
+    depends_on:
+      - prometheus
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring_network
+    command:
+      - '--web.listen-address=:9100'
+      - '--collector.disable-defaults'
+      - '--collector.cpu'
+      - '--collector.meminfo'
+      - '--collector.loadavg'
+      - '--collector.netstat'
+      - '--collector.diskstats'
+
+networks:
+  monitoring_network:
+    driver: bridge

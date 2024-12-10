@@ -1,0 +1,8 @@
+ports:
+  grafana: 3100  # Port de Grafana
+  prometheus: 9090  # Port de Prometheus
+  bentoml_service: 3000  # Port utilisé par BentoML
+  ML_flow: 9090 # Port utilisé par MLflow
+  drift_monitoring_api: 8080  # Port pour le Drift Monitoring
+  tensorflow_serving: 8501  # Port pour TensorFlow Serving
+  custom_service: 5000  # Un autre service personnalisé

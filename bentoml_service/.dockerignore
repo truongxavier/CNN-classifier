@@ -1,0 +1,19 @@
+# Ignorer les dossiers et fichiers inutiles
+__pycache__/
+*.pyc
+*.log
+*.DS_Store
+
+# Ignorer les fichiers volumineux sauf le modèle requis
+src/models/*
+!src/models/saved_modelcnn.keras
+
+# Exclure les données de développement
+tests/
+data/*
+!data/raw/__results___6_0.png
+node_modules/
+
+# Ignorer les fichiers temporaires de l'éditeur
+.vscode/
+.idea/

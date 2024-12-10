@@ -1,0 +1,55 @@
+MLfow conteneur et un autre pour script et datas
+depuis l'arborescence principale
+Construire l'image Docker :
+
+    docker build -t data_pipeline/mlflow/mlflow_env -f data_pipeline/mlflow/Dockerfile .
+
+Cette commande utilise le Dockerfile situé dans data_pipeline/mlflow/.
+Elle génère une image Docker appelée mlflow_env.
+----------------------------
+Configurer un réseau Docker dédié:
+
+    docker network create mlflow_network
+
+--------------------------
+créer l'image Docker:
+
+    docker build -t mlflow_env -f data_pipeline/mlflow/Dockerfile .
+
+
+Cela permet aux conteneurs (MLflow et script) de communiquer via leur nom DNS.
+--------------------------
+lancer le conteneur MLflow:
+
+    docker run -d --name mlflow_server \
+        --network mlflow_network \
+        -p 8080:8080\
+        -v /home/kory/CNN-classifier/data_pipeline/mlartifacts:/mlartifacts \
+        mlflow_env
+
+-d: Exécuter le conteneur en arrière-plan.
+--name mlflow_server: Donner un nom au conteneur.
+--network mlflow_network: Connecter le conteneur au réseau Docker créé précédemment.
+-p 9090:9090: Rediriger le port 8080 de l'hôte vers le port 8080 du conteneur (interface MLflow accessible à http://localhost:8080).
+-v: Monter un volume pour stocker les artefacts MLflow.
+Vous pouvez vérifier son statut avec :
+
+    docker ps
+
+--------------------------
+Exécuter le script:
+
+    docker run --rm \
+        --network mlflow_network \
+        -v $(pwd)/data_pipeline/data:/app/data_pipeline/data \
+        -v $(pwd)/data_pipeline/src:/app/data_pipeline/src \
+        mlflow_env python /app/data_pipeline/src/training/CNN_retraining_drift_mlflow.py \
+        --model_index 1 --unfreeze_layers 5
+
+--rm: Supprimer automatiquement le conteneur après son exécution.
+--network mlflow_network: Connecter ce conteneur au réseau Docker pour qu'il puisse communiquer avec le serveur MLflow.
+-v: Monter les dossiers locaux contenant les données et scripts dans le conteneur.
+python /app/data_pipeline/src/training/CNN_retraining_mlflow.py: Commande pour exécuter le script d'entraînement.
+Montages :
+$(pwd)/data_pipeline/data:/app/data_pipeline/data: Monte les datasets dans le conteneur.
+$(pwd)/data_pipeline/src:/app/data_pipeline/src: Monte les scripts nécessaires. (modifié) 
