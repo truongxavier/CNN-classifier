@@ -53,3 +53,14 @@ python /app/data_pipeline/src/training/CNN_retraining_mlflow.py: Commande pour e
 Montages :
 $(pwd)/data_pipeline/data:/app/data_pipeline/data: Monte les datasets dans le conteneur.
 $(pwd)/data_pipeline/src:/app/data_pipeline/src: Monte les scripts nécessaires. (modifié) 
+
+
+--------------------------
+--------------------------
+--------------------------
+
+pour les artifacts
+créer le répertoire mlartifacts
+chmod -R 777 mlartifacts
+
+docker-compose up --build

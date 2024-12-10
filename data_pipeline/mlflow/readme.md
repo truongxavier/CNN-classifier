@@ -22,7 +22,7 @@ cd ..
 #modifier le nom du run à la main ligne 147 run_name = "second_run"
 #dans ce fichiers le chemin de base a été changer pour aller chercher sur data_pipeline alors qu'on lance de mlflow
 #j'ai entrainé sur le val et validé sur le test
-python mlflow/src/CNN_retraining_mlflow.py 
+#python mlflow/src/CNN_retraining_mlflow.py 
 python3 data_pipeline/mlflow/src/CNN_retraining_drift_mlflow.py
 
 #visualiser les résultats sur 

@@ -20,6 +20,9 @@ from evidently.tests import TestColumnDrift
 from evidently.pipeline.column_mapping import ColumnMapping
 import json
 import requests
+import tempfile
+import shutil
+import logging
 
 
 # Désactiver les GPU
@@ -182,6 +185,59 @@ def generate_drift_report(reference_data, current_data, output_dir):
     
     print("Métriques de drift calculées:", metrics)
     return metrics, report_path
+
+#-------------------------------------------------------------------------------
+# Fonction pour récupérer les artifacts locaux et les logger dans MLflow
+#-------------------------------------------------------------------------------
+# Configuration des logs
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def log_artifacts_to_mlflow(local_artifacts):
+    """
+    Copie les artéfacts locaux vers un répertoire temporaire et les enregistre dans MLflow
+    
+    Args:
+        local_artifacts (dict): Dictionnaire avec {nom_artifact: chemin_local}
+    """
+    logger.info("Début du logging des artéfacts...")
+    logger.info(f"Artéfacts à logger: {local_artifacts}")
+    
+    # Créer un répertoire temporaire
+    with tempfile.TemporaryDirectory() as temp_dir:
+        logger.info(f"Répertoire temporaire créé: {temp_dir}")
+        
+        # Copier chaque artéfact dans le répertoire temporaire
+        for artifact_name, local_path in local_artifacts.items():
+            logger.info(f"Traitement de l'artéfact {artifact_name} depuis {local_path}")
+            
+            if not os.path.exists(local_path):
+                logger.error(f"Le chemin {local_path} n'existe pas!")
+                continue
+                
+            # Créer un sous-répertoire pour chaque type d'artéfact
+            artifact_temp_dir = os.path.join(temp_dir, artifact_name)
+            os.makedirs(artifact_temp_dir, exist_ok=True)
+            logger.info(f"Sous-répertoire créé: {artifact_temp_dir}")
+            
+            try:
+                # Copier le fichier ou le répertoire
+                if os.path.isdir(local_path):
+                    temp_path = os.path.join(artifact_temp_dir, os.path.basename(local_path))
+                    logger.info(f"Copie du répertoire {local_path} vers {temp_path}")
+                    shutil.copytree(local_path, temp_path)
+                else:
+                    temp_path = os.path.join(artifact_temp_dir, os.path.basename(local_path))
+                    logger.info(f"Copie du fichier {local_path} vers {temp_path}")
+                    shutil.copy2(local_path, temp_path)
+                
+                # Log dans MLflow
+                logger.info(f"Logging de {artifact_temp_dir} vers MLflow")
+                mlflow.log_artifacts(artifact_temp_dir, artifact_name)
+                logger.info(f"Artéfact {artifact_name} loggé avec succès")
+                
+            except Exception as e:
+                logger.error(f"Erreur lors du traitement de {artifact_name}: {str(e)}")
 
 #-------------------------------------------------------------------------------
 # Fonction pour récupérer le dernier dataset basé sur le timestamp
@@ -359,7 +415,7 @@ with mlflow.start_run(run_name=run_name) as run:
             print(f"Attention : La métrique {metric_name} n'a pas pu être loggée (valeur : {metric_value})")
     
     # Logger les rapports de drift comme artéfacts
-    mlflow.log_artifacts(report_path, "drift_reports")
+    #mlflow.log_artifacts(report_path, "drift_reports")
 
     # Entraîner le modèle
     history = model.fit(
@@ -414,7 +470,31 @@ with mlflow.start_run(run_name=run_name) as run:
     plt.show()
 
     # Log de l'historique et de la figure en artefacts
-    mlflow.log_artifact(history_path)
-    mlflow.log_artifact(figure_path)
+    # mlflow.log_artifact(history_path)
+    # mlflow.log_artifact(figure_path)
+
+    # Vérification des chemins avant de créer le dictionnaire
+    logger.info(f"Vérification des chemins des artéfacts:")
+    logger.info(f"report_path: {report_path} - Existe: {os.path.exists(report_path)}")
+    logger.info(f"saved_model_path: {saved_model_path} - Existe: {os.path.exists(saved_model_path)}")
+    logger.info(f"history_path: {history_path} - Existe: {os.path.exists(history_path)}")
+    logger.info(f"figure_path: {figure_path} - Existe: {os.path.exists(figure_path)}")
+
+    # Préparer le dictionnaire des artéfacts locaux
+    local_artifacts = {
+        "drift_reports": report_path,
+        "model": saved_model_path,
+        "training_history": history_path,
+        "visualizations": figure_path
+    }
+    
+    # Logger les artéfacts via la fonction utilitaire
+    logger.info("Début du logging des artéfacts vers MLflow")
+    log_artifacts_to_mlflow(local_artifacts)
+    logger.info("Fin du logging des artéfacts")
+
+    # Vérification finale
+    logger.info(f"Run ID: {run.info.run_id}")
+    logger.info(f"Artifact URI: {mlflow.get_artifact_uri()}")
 
 mlflow.end_run()
