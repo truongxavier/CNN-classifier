@@ -48,6 +48,11 @@
         -H "Content-Type: multipart/form-data" \
         -F "image=@data/raw/__results___6_0.png"
 
+        curl -X POST "http://localhost:3000/predict" \
+        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJpYXQiOjE3MzM5MzMyMzEsImV4cCI6MTczMzkzNjgzMX0.ruDG4jCId1iNI83pDGpXgGPQPBld2zn98pQ4GUH79fI" \
+        -H "Content-Type: multipart/form-data" \
+        -F "image=@data/raw/pub02.jpg"
+
 python3 -m venv bento_env  
 
 source bento_env/bin/activate
