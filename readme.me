@@ -1,13 +1,28 @@
 structure du projet sans les fichiers
     tree -d -I "*_env*|data|mlruns" > structure_projet.txt
 
-Les services sont accessibles sur :
+démarrer le docker mlflow
+    cd data_pipeline/mlflow
+    docker-compose up --build -d
 
-Grafana : http://localhost:3100
-Prometheus : http://localhost:9090
-Metrics Exporter : http://localhost:8000
-mlflow : http://localhost:8080/    
-drift monitoring : http://localhost:8088/
+démarrer les docker monitoring
+    cd monitoring
+    docker-compose up --build -d    
+
+démarrer le docker bentoml
+    cd bentoml_service
+    docker run --rm -d -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+
+vérifier que les 7 docker soit démarrer
+    docker POST       
 
 pour lancer un entrainement
-python3 data_pipeline/mlflow/src/CNN_retraining_drift_mlflow.py
+    à la racine du projet
+    python3 data_pipeline/mlflow/src/CNN_retraining_drift_mlflow.py     
+
+Les services sont accessibles sur :
+    Grafana : http://localhost:3100
+    Prometheus : http://localhost:9090
+    Metrics Exporter : http://localhost:8000
+    mlflow : http://localhost:8080/    
+    drift monitoring : http://localhost:8088/
