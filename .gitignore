@@ -14,3 +14,4 @@ monitoring/grafana/grafana.db
 reports/
 bentoml_service/bento_env
 grafana.db
+streamlit/pres_env

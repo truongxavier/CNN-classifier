@@ -38,14 +38,26 @@
 │   │   │   └── grafana-lokiexplore-app
 │   │   │       └── img
 │   │   ├── png
-│   │   └── provisioning
-│   │       ├── alerting
-│   │       ├── dashboards
-│   │       ├── datasources
-│   │       └── plugins
+│   │   ├── provisioning
+│   │   │   ├── alerting
+│   │   │   ├── dashboards
+│   │   │   ├── datasources
+│   │   │   └── plugins
+│   │   └── reports
+│   ├── monitoring
+│   │   ├── nginx
+│   │   │   └── default.conf
+│   │   └── reports
+│   ├── nginx
 │   ├── prometheus
 │   │   └── alert_rules
 │   └── reports
-└── scripts
+│       ├── drift_report_20241211-100537
+│       ├── drift_report_20241211-110017
+│       ├── drift_report_20241211-110416
+│       └── drift_report_20241211-111001
+├── scripts
+└── streamlit
+    └── images
 
-48 directories
+60 directories
