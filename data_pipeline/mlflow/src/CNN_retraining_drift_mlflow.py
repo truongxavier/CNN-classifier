@@ -107,9 +107,22 @@ def generate_drift_report(reference_data, current_data, output_dir):
     reference_data['target'] = reference_data['target'].astype(int)
     current_data['target'] = current_data['target'].astype(int)
     
-    timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_path = f"{output_dir}/drift_report_{timestamp}"
-    os.makedirs(report_path, exist_ok=True)
+    timestamp_report = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    # report_path = f"{output_dir}/drift_report_{timestamp}"
+    
+    # Chemin de base vers reports depuis data_pipeline/mlflow/src
+    base_reports_path = "monitoring/reports"
+    # Création du sous-répertoire spécifique pour cet entraînement
+    report_path = f"{base_reports_path}/drift_report_{timestamp_report}"
+
+    logger.info(f"Chemin courant : {os.getcwd()}")
+    logger.info(f"Tentative de création du dossier: {report_path}")
+    
+    try:
+        os.makedirs(report_path, exist_ok=True)
+        logger.info(f"Dossier créé avec succès: {report_path}")
+    except Exception as e:
+        logger.error(f"Erreur lors de la création du dossier: {str(e)}")
     
     column_mapping = ColumnMapping(
         target='target',
@@ -186,6 +199,7 @@ def generate_drift_report(reference_data, current_data, output_dir):
             metrics[key] = 0.0
     
     print("Métriques de drift calculées:", metrics)
+
     return metrics, report_path
 
 #-------------------------------------------------------------------------------
@@ -446,7 +460,7 @@ with mlflow.start_run(run_name=run_name) as run:
     plt.legend(loc='upper right')
     plt.title('Training and Validation Loss')
 
-    figure_path = os.path.join(output_dir, "training_results.png")
+    figure_path = os.path.join(report_path, "training_results.png")
     plt.savefig(figure_path)
     plt.show()
 
@@ -455,27 +469,27 @@ with mlflow.start_run(run_name=run_name) as run:
     # mlflow.log_artifact(figure_path)
 
     # Vérification des chemins avant de créer le dictionnaire
-    logger.info(f"Vérification des chemins des artéfacts:")
-    logger.info(f"report_path: {report_path} - Existe: {os.path.exists(report_path)}")
-    logger.info(f"saved_model_path: {saved_model_path} - Existe: {os.path.exists(saved_model_path)}")
-    logger.info(f"history_path: {history_path} - Existe: {os.path.exists(history_path)}")
-    logger.info(f"figure_path: {figure_path} - Existe: {os.path.exists(figure_path)}")
+#     logger.info(f"Vérification des chemins des artéfacts:")
+#     logger.info(f"report_path: {report_path} - Existe: {os.path.exists(report_path)}")
+#     logger.info(f"saved_model_path: {saved_model_path} - Existe: {os.path.exists(saved_model_path)}")
+#     logger.info(f"history_path: {history_path} - Existe: {os.path.exists(history_path)}")
+#     logger.info(f"figure_path: {figure_path} - Existe: {os.path.exists(figure_path)}")
 
-    # Préparer le dictionnaire des artéfacts locaux
-    local_artifacts = {
-    "drift_reports": report_path,
-    "model": saved_model_path,
-    "training_history": history_path,
-    "visualizations": figure_path
-}
+#     # Préparer le dictionnaire des artéfacts locaux
+#     local_artifacts = {
+#     "drift_reports": report_path,
+#     "model": saved_model_path,
+#     "training_history": history_path,
+#     "visualizations": figure_path
+# }
     
-    # Logger les artéfacts via la fonction utilitaire
-    logger.info("Début du logging des artéfacts vers MLflow")
-    log_artifacts_to_mlflow(local_artifacts)
-    logger.info("Fin du logging des artéfacts")
+#     # Logger les artéfacts via la fonction utilitaire
+#     logger.info("Début du logging des artéfacts vers MLflow")
+#     log_artifacts_to_mlflow(local_artifacts)
+#     logger.info("Fin du logging des artéfacts")
 
-    # Vérification finale
-    logger.info(f"Run ID: {run.info.run_id}")
-    logger.info(f"Artifact URI: {mlflow.get_artifact_uri()}")
+#     # Vérification finale
+#     logger.info(f"Run ID: {run.info.run_id}")
+#     logger.info(f"Artifact URI: {mlflow.get_artifact_uri()}")
 
 mlflow.end_run()

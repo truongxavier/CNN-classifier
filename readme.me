@@ -1,0 +1,13 @@
+structure du projet sans les fichiers
+    tree -d -I "*_env*|data|mlruns" > structure_projet.txt
+
+Les services sont accessibles sur :
+
+Grafana : http://localhost:3100
+Prometheus : http://localhost:9090
+Metrics Exporter : http://localhost:8000
+mlflow : http://localhost:8080/    
+drift monitoring : http://localhost:8088/
+
+pour lancer un entrainement
+python3 data_pipeline/mlflow/src/CNN_retraining_drift_mlflow.py

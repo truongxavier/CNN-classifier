@@ -11,3 +11,4 @@ env/
 *.db
 mlartifacts/
 monitoring/grafana/grafana.db
+reports/

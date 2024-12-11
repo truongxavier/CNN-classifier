@@ -17,6 +17,7 @@ services:
     volumes:
       - ./grafana:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./reports:/var/lib/grafana/reports
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_SECURITY_ADMIN_USER=admin
@@ -56,6 +57,16 @@ services:
       - '--collector.loadavg'
       - '--collector.netstat'
       - '--collector.diskstats'
+
+  nginx-reports:
+    image: nginx:alpine
+    volumes:
+      - ./reports:/usr/share/nginx/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8088:80"
+    networks:
+      - monitoring_network
 
 networks:
   monitoring_network:
