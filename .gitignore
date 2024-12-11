@@ -12,3 +12,4 @@ env/
 mlartifacts/
 monitoring/grafana/grafana.db
 reports/
+bentoml_service/bento_env
