@@ -1,0 +1,60 @@
+Étape 1 : Préparation du Service BentoML
+    Développement du service :
+    Création d'un service BentoML dans le fichier src/service/service.py.
+    Chargement du modèle TensorFlow avec BentoML.
+    Mise en place d'un endpoint pour les prédictions.
+    Ajout d'une sécurité avec JWT pour protéger les API.
+    Configuration de BentoML :
+    Création du fichier bentofile.yaml pour définir le service, inclure les fichiers nécessaires, et spécifier les dépendances (TensorFlow, BentoML, etc.).
+    Organisation des fichiers :
+    Organisation des modèles, du préprocesseur, et des utilitaires dans un répertoire src.
+    Exclusion des fichiers inutiles pour alléger l’image finale.
+
+Étape 2 : Construction du Bento
+    Exportation du modèle :
+    Conversion et sauvegarde du modèle TensorFlow au format .keras.
+        deprected python src/models/load_model.py  
+    Enregistrement du modèle dans le store BentoML avec la commande :
+        python src/models/load_models_savebento.py
+        Vérification des models Bentos :
+            bentoml models list (suppresion : bentoml models delete)
+    Construction du Bento :
+        Création du bento avec la commande :
+            bentoml build (suppression : bentoml delete)
+        Liste des Bentos construits :
+            bentoml list
+
+Étape 3 : Conteneurisation avec BentoML
+    Construction de l'image Docker :
+    Utilisation de bentoml containerize pour construire une image Docker contenant le service :
+        bentoml containerize document_classifier_service:latest
+    Vérification des images Docker :
+    Liste des images générées :
+        docker images (suppression : docker rmi)
+    Lancement du conteneur :
+    Démarrage du service dans un conteneur Docker avec la commande :
+        docker run --rm -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+    génération de token
+        curl -X POST "http://localhost:3000/generate_token" \
+        -H "Content-Type: application/json" \
+        -d '{"username": "test_user"}'
+    vérification du statut
+        curl -X POST "http://localhost:3000/status_check" \
+        -H "Content-Type: application/json" \
+        -d '{}'
+    prédiction
+        curl -X POST "http://localhost:3000/predict" \
+        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJpYXQiOjE3MzM5MTM1NjgsImV4cCI6MTczMzkxNzE2OH0.nZVLX92sKrS4wu7paoHxeAM4SDt982pHV-VYKVLYJfY" \
+        -H "Content-Type: multipart/form-data" \
+        -F "image=@data/raw/__results___6_0.png"
+
+python3 -m venv bento_env  
+
+source bento_env/bin/activate
+
+pip install -r requirements.txt
+
+bentoml containerize document_classifier_service:latest
+docker run --rm -d -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+curl -X POST "http://localhost:3000/generate_token" \ -H "Content-Type: application/json" \ -d '{"username": "test_user"}'
+curl -X POST "http://localhost:3000/status_check" \ -H "Content-Type: application/json" \ -d '{}'
