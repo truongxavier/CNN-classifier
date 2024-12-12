@@ -7,3 +7,4 @@ requests>=2.26.0
 numpy
 fastapi
 PyJWT>=2.0
+prometheus_client==0.16.0
