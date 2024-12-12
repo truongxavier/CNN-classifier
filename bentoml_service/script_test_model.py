@@ -1,6 +1,7 @@
-import numpy as np
-from PIL import Image
 import tensorflow as tf
+from tensorflow.keras.models import load_model
+from PIL import Image
+import numpy as np
 
 def preprocess_image(image):
     """
@@ -17,7 +18,7 @@ def preprocess_image(image):
     Returns:
         np.ndarray: Image prétraitée sous forme de tableau NumPy.
     """
-    # # Convertir en niveaux de gris
+    # Convertir en niveaux de gris
     # image = image.convert('L')
 
     # # Redimensionner à 224x224
@@ -33,3 +34,29 @@ def preprocess_image(image):
     image_tensor = tf.convert_to_tensor(image_tensor, dtype=tf.float32)
 
     return image_tensor
+
+# Charger le modèle
+model_path = "bentoml_service/src/models/saved_modelcnn.keras"
+model = load_model(model_path)
+
+# Recompiler le modèle
+learning_rate = 1e-5
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+image_paths = [
+    "bentoml_service/data/raw/email.png",
+    "bentoml_service/data/raw/form.png",
+    "bentoml_service/data/raw/file_folder.png"
+]
+
+for image_path in image_paths:
+    img = Image.open(image_path)
+    img_preprocessed = preprocess_image(img)
+    prediction = model.predict(img_preprocessed)
+    print(f"Prediction for {image_path}: {prediction}")
+    predicted_class = np.argmax(prediction, axis=1)[0]
+    confidence_score = np.max(prediction) * 100
+    print(f"predicted_class for {image_path}: {predicted_class}")
+    print(f"confidence_score for {image_path}: {confidence_score}")
