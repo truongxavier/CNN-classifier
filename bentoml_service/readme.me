@@ -23,7 +23,7 @@
             bentoml models list (suppresion : bentoml models delete)
     Construction du Bento :
         Création du bento avec la commande :
-            bentoml build (suppression : bentoml delete)
+            bentoml build (suppression : bentoml delete document_classifier_service:grczx7vtboevpuo5)
         Liste des Bentos construits :
             bentoml list
 
@@ -36,7 +36,7 @@
         docker images (suppression : docker rmi)
     Lancement du conteneur :
     Démarrage du service dans un conteneur Docker avec la commande :
-        docker run --rm -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+        docker run --rm -p 3000:3000 document_classifier_service:sssoqvfyogclzs5m
     génération de token
         curl -X POST "http://localhost:3000/generate_token" \
         -H "Content-Type: application/json" \
@@ -63,6 +63,6 @@ source bento_env/bin/activate
 pip install -r requirements.txt
 
 bentoml containerize document_classifier_service:latest
-docker run --rm -d -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+docker run --rm -d -p 3000:3000 document_classifier_service:latest
 curl -X POST "http://localhost:3000/generate_token" \ -H "Content-Type: application/json" \ -d '{"username": "test_user"}'
 curl -X POST "http://localhost:3000/status_check" \ -H "Content-Type: application/json" \ -d '{}'
