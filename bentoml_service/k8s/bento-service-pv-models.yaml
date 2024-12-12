@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bento-service-pv-config
+  labels:
+    io.kompose.service: bento-service-claim2
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /home/kory/CNN-classifier/bentoml_service/bentofile.yaml

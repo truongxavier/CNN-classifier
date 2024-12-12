@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
 services:
   bento-service:
     image: document_classifier_service:klpdnefs424gydo4  # Utiliser l'image locale
