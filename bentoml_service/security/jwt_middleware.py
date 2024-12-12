@@ -33,7 +33,7 @@ class JWTAuthenticationMiddleware(BaseHTTPMiddleware):
             "timestamp": datetime.utcnow().isoformat(),
         }
 
-        if request.url.path in ['/docs', '/openapi.json', '/healthz', '/generate_token', '/status_check']:
+        if request.url.path in ['/docs', '/openapi.json', '/healthz', '/generate_token', '/status_check', '/custom_metrics', '/metrics']:
             return await call_next(request)
 
         auth_header = request.headers.get('Authorization')

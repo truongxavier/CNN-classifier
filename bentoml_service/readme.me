@@ -23,7 +23,7 @@
             bentoml models list (suppresion : bentoml models delete)
     Construction du Bento :
         Création du bento avec la commande :
-            bentoml build (suppression : bentoml delete document_classifier_service:grczx7vtboevpuo5)
+            bentoml build (suppression : bentoml delete document_classifier_service:zioe77fyrsclzs5m)
         Liste des Bentos construits :
             bentoml list
 
@@ -63,6 +63,6 @@ source bento_env/bin/activate
 pip install -r requirements.txt
 
 bentoml containerize document_classifier_service:latest
-docker run --rm -d -p 3000:3000 document_classifier_service:latest
+docker run --rm -d -p 3000:3000 document_classifier_service:zo3betfyukclzs5m 
 curl -X POST "http://localhost:3000/generate_token" \ -H "Content-Type: application/json" \ -d '{"username": "test_user"}'
 curl -X POST "http://localhost:3000/status_check" \ -H "Content-Type: application/json" \ -d '{}'

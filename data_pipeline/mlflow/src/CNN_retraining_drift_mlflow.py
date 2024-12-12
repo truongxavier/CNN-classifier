@@ -431,7 +431,7 @@ with mlflow.start_run(run_name=run_name) as run:
     print(f"Historique sauvegardé à : {history_path}")
 
     # Log du modèle avec MLflow
-    dmlflow.keras.log_model(model, artifact_path="model")
+    # mlflow.keras.log_model(model, artifact_path="model")
 
     # Récupération des métriques finales
     acc = history.history['accuracy']

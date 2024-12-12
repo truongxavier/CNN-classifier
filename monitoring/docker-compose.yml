@@ -8,6 +8,7 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring_network
+      - app-network
 
   grafana:
     image: grafana/grafana:latest
@@ -24,6 +25,7 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - monitoring_network
+      - app-network
 
   metrics_exporter:
     build: 
@@ -41,6 +43,7 @@ services:
       - monitoring_network
     depends_on:
       - prometheus
+      
 
   node_exporter:
     image: prom/node-exporter:latest
@@ -67,7 +70,11 @@ services:
       - "8088:80"
     networks:
       - monitoring_network
+      - app-network
 
 networks:
   monitoring_network:
     driver: bridge
+  app-network:
+    driver: bridge
+    name: app-network  # Nom ex

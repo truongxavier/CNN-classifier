@@ -9,7 +9,7 @@ include:
   - "*.yaml"
 
 models:
-  - "document_classifier_model:x4bgk6vtbkevpuo5"
+  - "document_classifier_model:latest"
 
 python:
   packages:

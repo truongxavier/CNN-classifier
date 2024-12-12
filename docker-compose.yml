@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  mlflow:
+    build:
+      context: /home/xavier/code/truongxavier/CNN-classifier/data_pipeline  # Contexte au niveau de data_pipeline
+      dockerfile: mlflow/Dockerfile
+    container_name: mlflow-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data_pipeline/mlflow/mlartifacts:/app/mlflow/mlartifacts
+      - ./data_pipeline/mlflow/src:/app/mlflow/src
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:8080
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/mlflow/mlartifacts
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /app/mlflow/mlartifacts
+      --host 0.0.0.0
+      --port 8080
+    networks:
+      - monitoring_network
+
+  bento-service:
+    image: document_classifier_service:zo3betfyukclzs5m
+    container_name: bento-service
+    ports:
+      - "3000:3000"
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:8080
+    networks:
+      - monitoring_network
+    depends_on:
+      - mlflow
+
+  metrics_exporter:
+    build: 
+      context: /home/xavier/code/truongxavier/CNN-classifier/monitoring
+      dockerfile: Dockerfile
+    container_name: metrics_exporter
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:8080
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./monitoring/prometheus_exporter.py:/app/prometheus_exporter.py
+    networks:
+      - monitoring_network
+    depends_on:
+      - mlflow
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring_network
+    depends_on:
+      - bento-service
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    user: "472"
+    ports:
+      - "${GRAFANA_PORT:-3100}:3000"
+    volumes:
+      - ./monitoring/grafana:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/reports:/var/lib/grafana/reports
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring_network
+    depends_on:
+      - prometheus
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring_network
+    command:
+      - '--web.listen-address=:9100'
+      - '--collector.disable-defaults'
+      - '--collector.cpu'
+      - '--collector.meminfo'
+      - '--collector.loadavg'
+      - '--collector.netstat'
+      - '--collector.diskstats'
+
+  nginx-reports:
+    image: nginx:alpine
+    container_name: nginx-reports
+    volumes:
+      - ./monitoring/reports:/usr/share/nginx/html:ro
+      - ./monitoring/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8088:80"
+    networks:
+      - monitoring_network
+
+networks:
+  monitoring_network:
+    driver: bridge
