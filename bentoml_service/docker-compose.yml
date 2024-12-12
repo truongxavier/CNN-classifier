@@ -1,49 +1,12 @@
 version: "3.9"
-
 services:
   bento-service:
-    image: document_classifier_service:latest  # Image générée par bentoml containerize
-    container_name: bento-service
+    image: document_classifier_service:klpdnefs424gydo4  # Utiliser l'image locale
+    container_name: bento-container
     ports:
-      - "3000:3000"  # Port pour accéder au service BentoML
-    environment:
-      BENTOML_CONFIG: /bentoml_config.yml
+      - "3000:3000"  # Mapping du port local vers le port du conteneur
     volumes:
-      - ./bentoml_service/config:/bentoml_config.yml:ro  # Configuration optionnelle
-    networks:
-      - app-network
+      - ./data:/app/data  # Si vous avez besoin de monter des volumes
+      - ./src/models:/app/models
+      - ./bentofile.yaml:/bentoml/bentofile.yaml  # Montez le fichier bentofile.yaml
 
-  mlflow:
-    image: mlflow:latest
-    container_name: mlflow-server
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./mlartifacts:/mlartifacts
-      - ./mlflow_data:/mlflow_data
-    networks:
-      - app-network
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9091:9090"
-    networks:
-      - app-network
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3001:3000"
-    volumes:
-      - ./grafana/data:/var/lib/grafana
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
