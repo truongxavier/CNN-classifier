@@ -439,6 +439,7 @@ def main():
                         token = generate_token()
                         if token:
                             # Faire la prédiction directement avec le fichier uploadé
+                            st.write("Token :", token)
                             prediction = predict_image(uploaded_file, token)
                             
                             if prediction:
