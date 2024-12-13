@@ -3,7 +3,7 @@ version: "3.9"
 services:
   mlflow:
     build:
-      context: /home/xavier/code/truongxavier/CNN-classifier/data_pipeline  # Contexte au niveau de data_pipeline
+      context: ./data_pipeline  # Contexte au niveau de data_pipeline
       dockerfile: mlflow/Dockerfile
     container_name: mlflow-server
     ports:
@@ -24,7 +24,7 @@ services:
       - monitoring_network
 
   bento-service:
-    image: document_classifier_service:zo3betfyukclzs5m
+    image: document_classifier_service:klpdnefs424gydo4
     container_name: bento-service
     ports:
       - "3000:3000"
@@ -37,7 +37,7 @@ services:
 
   metrics_exporter:
     build: 
-      context: /home/xavier/code/truongxavier/CNN-classifier/monitoring
+      context: ./monitoring
       dockerfile: Dockerfile
     container_name: metrics_exporter
     environment:
