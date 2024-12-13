@@ -1,6 +1,67 @@
 🪄 DocuMancer
 Description
 DocuMancer est une solution MLOps complète pour la classification automatique de documents utilisant des techniques avancées de deep learning. Le projet utilise le dataset RVL-CDIP contenant 400 000 images de documents répartis en 16 catégories différentes (lettres, factures, mémos, etc.).
+.
+├── bentoml_service
+│   ├── __pycache__
+│   ├── security
+│   │   └── __pycache__
+│   ├── src
+│   │   ├── __pycache__
+│   │   ├── models
+│   │   ├── preprocessing
+│   │   │   └── __pycache__
+│   │   ├── service
+│   │   │   └── __pycache__
+│   │   └── utils
+│   └── tests
+│       └── __pycache__
+├── data_pipeline
+│   ├── evaluation_results
+│   ├── mlflow
+│   │   ├── mlartifacts
+│   │   └── src
+│   ├── src
+│   │   ├── evaluation
+│   │   ├── preprocessing
+│   │   └── training
+│   └── tests
+├── kubernetes
+│   ├── base
+│   ├── monitoring
+│   ├── network
+│   ├── scaling
+│   └── secrets
+├── monitoring
+│   ├── grafana
+│   │   ├── csv
+│   │   ├── dashboards
+│   │   ├── pdf
+│   │   ├── plugins
+│   │   │   └── grafana-lokiexplore-app
+│   │   │       └── img
+│   │   ├── png
+│   │   ├── provisioning
+│   │   │   ├── alerting
+│   │   │   ├── dashboards
+│   │   │   ├── datasources
+│   │   │   └── plugins
+│   │   └── reports
+│   ├── monitoring
+│   │   ├── nginx
+│   │   │   └── default.conf
+│   │   └── reports
+│   ├── nginx
+│   ├── prometheus
+│   │   └── alert_rules
+│   └── reports
+│       ├── drift_report_20241211-100537
+│       ├── drift_report_20241211-110017
+│       ├── drift_report_20241211-110416
+│       └── drift_report_20241211-111001
+├── scripts
+└── streamlit
+    └── images
 
 🌟 Fonctionnalités
 
