@@ -24,7 +24,7 @@ services:
       - monitoring_network
 
   bento-service:
-    image: document_classifier_service:klpdnefs424gydo4
+    image: document_classifier_service:latest
     container_name: bento-service
     ports:
       - "3000:3000"
