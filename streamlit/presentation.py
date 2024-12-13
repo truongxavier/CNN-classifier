@@ -479,7 +479,7 @@ def main():
         Génération de rapports détaillés
         Interface de visualisation via Nginx
         ''')
-        st.title('Ce qui manquue')
+        st.title('Ce qui manque')
         st.image(image_path + '/composantsmanquant.jpg', use_container_width=True)
         st.markdown('''
         Points d'amélioration :
