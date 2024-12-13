@@ -191,10 +191,10 @@ def main():
         ''')
         st.subheader('Objectifs du Projet')
         st.markdown('''
-        L'objectif principal du projet est de développer un modèle performant capable de classer automatiquement les documents en fonction de leur type.
-        Nous avons exploré plusieurs approches, notamment les réseaux convolutifs (CNN) pour les images, BERT pour l'analyse textuelle après OCR, et une approche multimodale combinant les deux pour optimiser les performances.
+        L'objectif principal du projet est de développer le MLOPS pour notre CNN , pour la classification de documents
         ''')
-
+        st.image(image_path + '/cnn_workflow.png', use_container_width=True)
+        
     #---------------------------------------------------------------------------
     # Architecture du projet
     #---------------------------------------------------------------------------
@@ -202,19 +202,21 @@ def main():
 
         st.title('Architecture du projet')
         st.markdown('''
-        Le dataset **RVL-CDIP** (Ryerson Vision Lab Complex Document Information Processing) est une ressource de référence dans le domaine de la classification de documents.
-        Il contient **400 000 images de documents numérisés**, réparties en **16 catégories**, offrant une diversité qui permet de tester la capacité des modèles à reconnaître et différencier des types de documents variés.
+        L'architecture du projet est basée sur une approche MLOPS, qui combine les pratiques de Machine Learning et DevOps.
+                    
         ''')
-
-       
-
-
+        st.image(image_path + '/Architecture.jpg', use_container_width=True)
+        st.image(image_path + '/cyclemlops.jpg', use_container_width=True)
+        st.image(image_path + '/finetuningmodel.jpg', use_container_width=True)
+        st.image(image_path + '/generationdrift.jpg', use_container_width=True)
+        st.image(image_path + '/fluxmonitoring.jpg', use_container_width=True)
     #---------------------------------------------------------------------------
     # Les services exposés
     #---------------------------------------------------------------------------
     elif page == 'Les services exposés':
         st.title('Les services exposés')
         
+        st.title('Architecture du projet')
         
 
     #---------------------------------------------------------------------------
@@ -350,16 +352,38 @@ def main():
     #---------------------------------------------------------------------------
     elif page == 'Conclusion & perspectives':
         st.title('Conclusion & perspectives')
+        st.image(image_path + '/axeamélioration.jpg', use_container_width=True)
         st.markdown('''
-        Le projet a démontré l'efficacité des modèles CNN et BERT pour la classification de documents.
-        L'approche multimodale a surpassé les performances des modèles individuels, atteignant une précision de **89.68%**, avec seulement  28 millions de paramètres !.
+        Le projet a démontré l'efficacité des modèles CNN classification de documents.
+        Points forts de votre projet :
 
-        Perspectives d'amélioration :
-        - **Augmentation des données** : Utiliser des techniques d'augmentation pour enrichir le dataset.
-        - **Optimisation du prétraitement** : Améliorer le prétraitement des images et l'OCR.
-        - **Optimisation des hyperparamètres** : Ajuster les hyperparamètres pour optimiser les performances.
+        MLflow pour le tracking des expériences
+        BentoML pour le serving
+        Stack de monitoring robuste avec Prometheus/Grafana
+        Gestion du drift avec des rapports détaillés
+
+        Métriques ML bien structurées
+        Monitoring système
+        Dashboards Grafana bien organisés
+        Visualisation des performances du modèle
+
+        Data drift
+
+        Détection automatique
+        Génération de rapports détaillés
+        Interface de visualisation via Nginx
         ''')
         
+        st.image(image_path + '/composantsmanquant.jpg', use_container_width=True)
+        st.markdown('''
+        Points d'amélioration :
+
+        Manque de CI/CD
+        Pas de tests automatisés
+        Absence de Kubernetes
+        Sécurité basique
+        ''')
+        st.image(image_path + '/cicd.jpg', use_container_width=True)
 
 #-------------------------------------------------------------------------------
 # Lancement
