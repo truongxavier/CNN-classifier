@@ -206,9 +206,13 @@ def main():
                     
         ''')
         st.image(image_path + '/Architecture.jpg', use_container_width=True)
+        st.title('Cycle mlpos')
         st.image(image_path + '/cyclemlops.jpg', use_container_width=True)
+        st.title('Fine tuning du modèle pour réentrainement')
         st.image(image_path + '/finetuningmodel.jpg', use_container_width=True)
+        st.title('Génértion du drift')
         st.image(image_path + '/generationdrift.jpg', use_container_width=True)
+        st.title('Flux du monitoring mis en place')
         st.image(image_path + '/fluxmonitoring.jpg', use_container_width=True)
     #---------------------------------------------------------------------------
     # Les services exposés
