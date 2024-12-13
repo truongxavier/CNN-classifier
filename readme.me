@@ -1,28 +1,139 @@
-structure du projet sans les fichiers
-    tree -d -I "*_env*|data|mlruns" > structure_projet.txt
+🪄 DocuMancer
+Description
+DocuMancer est une solution MLOps complète pour la classification automatique de documents utilisant des techniques avancées de deep learning. Le projet utilise le dataset RVL-CDIP contenant 400 000 images de documents répartis en 16 catégories différentes (lettres, factures, mémos, etc.).
 
-démarrer le docker mlflow
-    cd data_pipeline/mlflow
-    docker-compose up --build -d
+🌟 Fonctionnalités
 
-démarrer les docker monitoring
-    cd monitoring
-    docker-compose up --build -d    
+Classification automatique de documents via CNN
+Interface utilisateur intuitive avec Streamlit
+Pipeline MLOps complet avec monitoring
+Détection de drift de données
+API RESTful pour les prédictions
+Visualisation des métriques en temps réel
 
-démarrer le docker bentoml
-    cd bentoml_service
-    docker run --rm -d -p 3000:3000 document_classifier_service:grczx7vtboevpuo5
+🏗️ Architecture
 
-vérifier que les 7 docker soit démarrer
-    docker POST       
+L'architecture du projet s'appuie sur les composants suivants :
 
-pour lancer un entrainement
-    à la racine du projet
-    python3 data_pipeline/mlflow/src/CNN_retraining_drift_mlflow.py     
+MLflow pour le tracking des expériences
+BentoML pour le serving
+Prometheus/Grafana pour le monitoring
+FastAPI pour l'exposition des services
+Streamlit pour l'interface utilisateur
 
+🚀 Installation
+Prérequis
+
+Python 3.8+
+Docker & Docker Compose
+CUDA compatible GPU (recommandé)
+
+Installation des dépendances
+bashCopy# Cloner le repository
+git clone https://github.com/votre-username/documancer.git
+cd documancer
+
+# Créer un environnement virtuel
+python -m venv venv
+source venv/bin/activate  # Sur Windows: .\venv\Scripts\activate
+
+# Installer les dépendances
+pip install -r requirements.txt
+Démarrage des services
+bashCopy# Lancer les services avec Docker Compose
+docker-compose up -d
+
+# Vérifier que tous les services sont up
+docker-compose ps
+📊 Services Exposés
 Les services sont accessibles sur :
-    Grafana : http://localhost:3100
-    Prometheus : http://localhost:9090
-    Metrics Exporter : http://localhost:8000
-    mlflow : http://localhost:8080/    
-    drift monitoring : http://localhost:8088/
+
+Grafana : http://localhost:3100
+Prometheus : http://localhost:9090
+Metrics Exporter : http://localhost:8000
+MLflow : http://localhost:8080/
+Drift Monitoring : http://localhost:8088/
+
+💻 Utilisation
+Lancement de l'interface Streamlit
+bashCopystreamlit run presentation.py
+Faire une prédiction via l'API
+pythonCopyimport requests
+import json
+
+# Générer un token
+token_response = requests.post(
+    "http://localhost:3000/generate_token",
+    headers={"Content-Type": "application/json"},
+    json={"username": "test_user"}
+)
+token = token_response.json()["token"]
+
+# Faire une prédiction
+files = {
+    'image': ('document.jpg', open('path/to/your/document.jpg', 'rb'), 'image/jpeg')
+}
+headers = {
+    "Authorization": f"Bearer {token}"
+}
+response = requests.post(
+    "http://localhost:3000/predict",
+    headers=headers,
+    files=files
+)
+prediction = response.json()
+print(prediction)
+📈 Monitoring
+Métriques disponibles
+
+Performance du modèle (accuracy, précision, recall)
+Temps d'inférence
+Utilisation des ressources (CPU, RAM, GPU)
+Détection de drift
+Santé des services
+
+Dashboards Grafana
+Des dashboards préconfigurés sont disponibles pour :
+
+Monitoring système
+Performances du modèle
+Analyse du drift
+Métriques d'API
+
+🧪 Tests
+bashCopy# Lancer les tests unitaires
+pytest tests/
+
+# Lancer les tests d'intégration
+pytest tests/integration/
+
+# Vérifier la couverture des tests
+pytest --cov=src tests/
+📝 Documentation
+La documentation complète est disponible dans le dossier docs/ et inclut :
+
+Guide d'installation détaillé
+Documentation API
+Guide de contribution
+Spécifications techniques
+
+🤝 Contribution
+Les contributions sont les bienvenues ! Consultez notre guide de contribution pour plus de détails.
+👥 Équipe
+
+Kevin Ory - LinkedIn
+Xavier Truong - LinkedIn
+
+📄 Licence
+Ce projet est sous licence MIT - voir le fichier LICENSE.md pour plus de détails.
+🙏 Remerciements
+
+DataScientest pour leur soutien et leur encadrement
+La communauté ML pour les ressources et outils open source
+Les contributeurs du dataset RVL-CDIP
+
+📞 Support
+Pour toute question ou problème :
+
+Ouvrez une issue sur GitHub
+Contactez l'équipe via LinkedIn
