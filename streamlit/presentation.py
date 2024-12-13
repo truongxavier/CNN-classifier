@@ -331,7 +331,8 @@ def main():
     elif page == 'Entrainons le modèle':
         st.title('Entrainons le modèle')
         
-           
+        st.title('Ré-entrainement du modèle de prédiction')
+        st.image(image_path + '/VSCode_training.jpg', use_container_width=True)
 
     #---------------------------------------------------------------------------
     # Prédiction 
