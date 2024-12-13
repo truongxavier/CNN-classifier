@@ -216,8 +216,110 @@ def main():
     elif page == 'Les services exposés':
         st.title('Les services exposés')
         
-        st.title('Architecture du projet')
+        # CSS modifié pour un thème sombre
+        st.markdown("""
+            <style>
+            .service-container {
+                background-color: #1E1E1E;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .service-item {
+                background-color: #2D2D2D;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+                border: 1px solid #3D3D3D;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: transform 0.2s ease-in-out;
+            }
+            .service-item:hover {
+                transform: translateX(5px);
+                background-color: #333333;
+            }
+            .service-name {
+                color: #2ED4DA;
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+            .service-url {
+                color: #969696;
+            }
+            .service-url a {
+                color: #2ED4DA;
+                text-decoration: none;
+                transition: color 0.2s ease-in-out;
+            }
+            .service-url a:hover {
+                color: #382DD5;
+            }
+            .service-description {
+                background-color: #1E1E1E;
+                padding: 20px;
+                border-radius: 10px;
+                margin-top: 20px;
+            }
+            .service-description h3 {
+                color: #2ED4DA;
+                margin-bottom: 15px;
+            }
+            .service-description ul {
+                list-style-type: none;
+                padding-left: 0;
+            }
+            .service-description li {
+                color: #FFFFFF;
+                margin-bottom: 10px;
+                padding-left: 20px;
+                position: relative;
+            }
+            .service-description li::before {
+                content: "•";
+                color: #2ED4DA;
+                position: absolute;
+                left: 0;
+            }
+            </style>
+        """, unsafe_allow_html=True)
         
+        # Affichage des services avec icônes
+        services = [
+            {"name": "Grafana", "url": "http://localhost:3100", "icon": "📊"},
+            {"name": "Prometheus", "url": "http://localhost:9090", "icon": "📈"},
+            {"name": "Metrics Exporter", "url": "http://localhost:8000", "icon": "📤"},
+            {"name": "MLflow", "url": "http://localhost:8080", "icon": "🔄"},
+            {"name": "Drift Monitoring", "url": "http://localhost:8088", "icon": "📉"}
+        ]
+        
+        st.markdown('<div class="service-container">', unsafe_allow_html=True)
+        for service in services:
+            st.markdown(f"""
+                <div class="service-item">
+                    <div>
+                        <span class="service-name">{service['icon']} {service['name']}</span>
+                    </div>
+                    <span class="service-url">
+                        <a href="{service['url']}" target="_blank">{service['url']}</a>
+                    </span>
+                </div>
+            """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="service-description">
+            <h3>Description des services</h3>
+            <ul>
+                <li><strong>Grafana</strong> : Interface de visualisation pour le monitoring des métriques en temps réel. Permet de créer des tableaux de bord personnalisés pour suivre les performances du système.</li>
+                <li><strong>Prometheus</strong> : Système de collecte et stockage des métriques. Assure la surveillance continue des performances et la disponibilité des services.</li>
+                <li><strong>Metrics Exporter</strong> : Service d'exposition des métriques du modèle, permettant le suivi des performances et la santé du système de prédiction.</li>
+                <li><strong>MLflow</strong> : Plateforme de gestion du cycle de vie ML, permettant le suivi des expériences, la comparaison des modèles et la gestion des déploiements.</li>
+                <li><strong>Drift Monitoring</strong> : Système de surveillance de la dérive des données, assurant la détection précoce des anomalies et des changements dans les patterns de données.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
     #---------------------------------------------------------------------------
     # Entrainons le modèle
