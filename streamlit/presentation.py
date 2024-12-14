@@ -6,6 +6,7 @@ import requests
 import json
 import shutil
 import tempfile
+import matplotlib.pyplot as plt
 
 #-------------------------------------------------------------------------------
 # Paramétrage de lancement
@@ -176,25 +177,146 @@ def main():
     #---------------------------------------------------------------------------
 
 
-    #---------------------------------------------------------------------------
-    # Introduction au Projet
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------- 
+    # Introduction au Projet 
+    #--------------------------------------------------------------------------- 
     if page == 'Introduction au Projet':
-        # st.image(image_path + '/Documancer.gif', use_container_width=True)
+        # Affichage de l'image d'introduction
         st.image(image_path + '/Documancer3.gif', use_container_width=True)
-        st.title('présentation de '+ name_app)
+        st.title('Présentation de ' + name_app)
+
+        # Introduction et Contexte
         st.subheader('Introduction et Contexte du Projet')
         st.markdown('''
         Dans un monde où de nombreux secteurs comme la finance, la santé, et le juridique sont submergés de documents physiques et numériques, l'automatisation de leur gestion est un enjeu crucial.
         Notre projet s'est concentré sur la classification automatique de documents en utilisant des techniques avancées de deep learning.
         Le dataset que nous avons utilisé, RVL-CDIP, contient 400 000 images de documents répartis en 16 catégories (lettres, factures, mémos, etc.).
         ''')
-        st.subheader('Objectifs du Projet')
+
+        # Objectifs
+        st.title('Objectifs du Projet DST')
         st.markdown('''
-        L'objectif principal du projet est de développer le MLOPS pour notre CNN , pour la classification de documents
+        L'objectif principal du projet est de développer un modèle performant capable de classer automatiquement les documents en fonction de leur type.
+        Nous avions exploré plusieurs approches, notamment les réseaux convolutifs (CNN) pour les images, BERT pour l'analyse textuelle après OCR, et une approche multimodale combinant les deux pour optimiser les performances.
         ''')
+
+        # Le dataset RVL-CDIP
+        st.subheader('Le dataset RVL-CDIP')
+        st.markdown('''
+        Le dataset **RVL-CDIP** (Ryerson Vision Lab Complex Document Information Processing) est une ressource de référence dans le domaine de la classification de documents.
+        Il contient **400 000 images de documents numérisés**, réparties en **16 catégories**, offrant une diversité qui permet de tester la capacité des modèles à reconnaître et différencier des types de documents variés.
+        ''')
+
+        # Structure des Données
+        col1, col2 = st.columns([2, 1])  # La première colonne occupe 2/3, la seconde 1/3
+
+        # Texte dans la colonne de gauche
+        with col1:
+            st.subheader('Structure des Données')
+            st.markdown('''
+            Le dataset est divisé en trois ensembles pour faciliter l'entraînement et l'évaluation des modèles :
+            - **Ensemble d'entraînement** : 320 000 images utilisées pour ajuster les poids des modèles.
+            - **Ensemble de validation** : 40 000 images permettant de vérifier la capacité du modèle à généraliser sur des données non vues.
+            - **Ensemble de test** : 40 000 images pour évaluer la performance finale du modèle.
+            ''')
+
+        # Pie chart dans la colonne de droite
+        with col2:
+            # Création des données pour le pie chart
+            labels = ['Entraînement', 'Validation', 'Test']
+            sizes = [80, 10, 10]  # Proportions en pourcentage
+            colors = ['#66b3ff', '#99ff99', '#ffcc99']
+            explode = (0.1, 0, 0)  # Mettre en avant le segment de l'entraînement
+
+            # Création du pie chart
+            fig, ax = plt.subplots(figsize=(4, 4))  # Ajuste la taille du graphique
+            ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
+                shadow=True, startangle=90)
+            ax.axis('equal')  # Assure que le pie chart est circulaire.
+
+            # Afficher le graphique dans Streamlit
+            st.pyplot(fig)
+
+        # Liste des catégories et image d'exemple
+        st.markdown('''
+        Chaque image est associée à une étiquette correspondant à sa classe parmi les 16 catégories suivantes :
+        ''')
+
+        # Division en deux colonnes
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown('''
+            1. Lettre  
+            2. Formulaire  
+            3. Messagerie électronique  
+            4. Manuscrit  
+            5. Publicité  
+            6. Rapport scientifique  
+            7. Publication scientifique  
+            8. Spécification
+            ''')
+
+        with col2:
+            st.markdown('''
+            9. Dossier de fichiers  
+            10. Article de presse  
+            11. Budget  
+            12. Facture  
+            13. Présentation  
+            14. Questionnaire  
+            15. CV  
+            16. Mémo
+            ''')
+
+        image_labels = Image.open(image_path + '/labels_example.png')
+        st.image(image_labels, caption="Composition et exemples du dataset RVL-CDIP", use_container_width=True)
+
+        # Développement de 3 stratégies
+        st.subheader('Stratégies mises en place :')
+        st.markdown('''
+        Pour répondre à cette problématique, 3 stratégies ont été développées :
+
+        - Modèle **CNN** : Classification de documents par les images -> accuracy 86%
+
+        - Modèle **BERT** : Classification de documents par les textes -> accuracy 83%
+
+        - Modèle **BERT-CNN** : Classification de documents par les images et les textes -> accuracy 90%
+        ''')
+
+        st.image(image_path + "/strategies.png", caption="Stratégies déployées", use_container_width=True)
+        # st.image(image_path + "/cnn_workflow.png", caption="Workflow CNN", use_container_width=True)
+        # st.image(image_path + "/bert.PNG", caption="Workflow BERT", use_container_width=True)
+        # st.image(image_path + "/multimodal_workflow.png", caption="Workflow BERT-CNN", use_container_width=True)
+
+        # Objectifs MLOPs
+        st.title('Objectifs du Projet MLOPs')
         st.image(image_path + '/cnn_workflow.png', use_container_width=True)
+
+        st.subheader('''Le modèle CNN: un modèle léger et robuste''')
+        st.markdown('''
+        Dans cette partie MLOps, nous avons choisi de déployer le modèle CNN car il est spécifiquement optimisé 
+        pour analyser les informations visuelles des documents, avec une architecture plus légère 
+        et une meilleure efficacité sur des tâches basées uniquement sur des images, 
+        par rapport au modèle BERT ou multimodal qui nécessitent un traitement supplémentaire 
+        des données textuelles.
+        ''')
+
+        st.image(image_path + "/cnn_w_vgg16.png", caption="architecture CNN VG16 full fine-tuning", use_container_width=True)
         
+
+        st.markdown('''
+        L'objectif ici a été de déployer notre modèle CNN pour garantir un système automatisé, 
+        scalable et fiable pour classer des documents à partir de leurs caractéristiques visuelles. 
+        - mise en production du modèle pour traiter des requêtes en temps réel
+        - suivi des performances via des métriques (monitoring)
+        - gestion des versions pour intégrer rapidement des mises à jour ou des retrainings
+        - détection de dérives pour maintenir l’efficacité du modèle face à de nouvelles données.
+        ''')
+        
+        
+
+
     #---------------------------------------------------------------------------
     # Architecture du projet
     #---------------------------------------------------------------------------
