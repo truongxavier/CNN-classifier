@@ -332,6 +332,8 @@ def main():
         st.image(image_path + '/cyclemlops.jpg', use_container_width=True)
         st.title('Fine tuning du modèle pour réentrainement')
         st.image(image_path + '/finetuningmodel.jpg', use_container_width=True)
+        st.title('Séquence de training')
+        st.image(image_path + '/sequencetraining.jpg', use_container_width=True)
         st.title('Génération du drift')
         st.image(image_path + '/generationdrift.jpg', use_container_width=True)
         st.title('Flux du monitoring mis en place')
@@ -417,7 +419,8 @@ def main():
             {"name": "Prometheus", "url": "http://localhost:9090", "icon": "📈"},
             {"name": "Metrics Exporter", "url": "http://localhost:8000", "icon": "📤"},
             {"name": "MLflow", "url": "http://localhost:8080", "icon": "🔄"},
-            {"name": "Drift Monitoring", "url": "http://localhost:8088", "icon": "📉"}
+            {"name": "Drift Monitoring", "url": "http://localhost:8088", "icon": "📉"},
+            {"name": "Bentoml metrics", "url": "http://localhost:3000/metrics", "icon": "📉"}
         ]
         
         st.markdown('<div class="service-container">', unsafe_allow_html=True)
@@ -443,6 +446,7 @@ def main():
                 <li><strong>Metrics Exporter</strong> : Service d'exposition des métriques du modèle, permettant le suivi des performances et la santé du système de prédiction.</li>
                 <li><strong>MLflow</strong> : Plateforme de gestion du cycle de vie ML, permettant le suivi des expériences, la comparaison des modèles et la gestion des déploiements.</li>
                 <li><strong>Drift Monitoring</strong> : Système de surveillance de la dérive des données, assurant la détection précoce des anomalies et des changements dans les patterns de données.</li>
+                <li><strongBentoml metrics</strong> : récupération des metrics bentoml pour le fonctionnement de l'API et des prédictions</li>    
             </ul>
         </div>
         """, unsafe_allow_html=True)
